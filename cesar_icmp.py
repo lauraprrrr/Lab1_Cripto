@@ -17,11 +17,10 @@ def linux_ping_payload_with_char(ch: str) -> bytes:
     tv_usec = int((now - tv_sec) * 1_000_000)
     timeval = struct.pack("<qq", tv_sec, tv_usec)  
 
-
     pattern = bytearray(range(0x10, 0x10 + 40))
     pattern[0] = ord(ch) & 0xFF 
 
-    return timeval + bytes(pattern) 
+    return timeval + bytes(pattern)  
 
 if __name__ == "__main__":
     if len(sys.argv) < 4:
@@ -35,10 +34,10 @@ if __name__ == "__main__":
     cifrado = cifrado_cesar(texto, desplazamiento)
     print(f"Texto cifrado: {cifrado}")
 
-    icmp_id = os.getpid() & 0xFFFF  
+    icmp_id = os.getpid() & 0xFFFF 
 
     for i, ch in enumerate(cifrado):
         payload = linux_ping_payload_with_char(ch)
         paquete = IP(dst=destino)/ICMP(type="echo-request", id=icmp_id, seq=i)/payload
-        print(f"Enviando carácter '{ch}' en paquete ICMP seq={i} con 56 bytes de data (Linux style)")
+        print(f"Enviando carácter '{ch}' en paquete ICMP seq={i}")
         send(paquete, verbose=False)
